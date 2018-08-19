@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.picasso.Picasso;
 
 
 import br.com.opet.tds.pokeapiapp.Model.Pokemon;
@@ -27,6 +29,7 @@ import br.com.opet.tds.pokeapiapp.R;
 public class MainActivity extends Activity {
 
     private static String URL = "https://pokeapi.co/api/v2/pokemon/";
+    private static String url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/.png";
     private RequestQueue queue;
     private Gson gson;
 
@@ -37,6 +40,8 @@ public class MainActivity extends Activity {
     private TextView textTypes;
     private EditText editNome;
     private Button button;
+    private ImageView imageView;
+
 
 
     private ProgressBar progressBar;
@@ -54,19 +59,38 @@ public class MainActivity extends Activity {
         progressBar = findViewById(R.id.progressConnection);
         editNome = findViewById(R.id.editNomex);
         button = findViewById(R.id.button);
+        imageView = (ImageView)findViewById(R.id.imageView);
+
 
         GsonBuilder builder = new GsonBuilder();
         gson = builder.create();
         queue = Volley.newRequestQueue(this);
 
     }
+    private void loadImageFromUrl (String url) {
+        Picasso.with(this).load(url).placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+                .into(imageView,new com.squareup.picasso.Callback() {
 
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
 
 
     public void callPokemon(View view){
         String nome = editNome.getText().toString();
         String URL2 = nome;
+        url += URL2;
         URL += URL2;
+        loadImageFromUrl(url);
         progressBar.setVisibility(ProgressBar.VISIBLE);
         StringRequest request = new StringRequest(Request.Method.GET,URL,onPokemonLoaded,onPokemonError);
         queue.add(request);
